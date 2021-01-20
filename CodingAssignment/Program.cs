@@ -41,13 +41,23 @@ namespace CodingAssignment
         public PromotionType PromotionType { get; set; }
         // discount percentage
         public int DiscountPercentage { get; set; } = 100;
+        // offer price
         public decimal PromotionPrice { get; set; } = 0;
         // minimum order quantity required for being eligible for the discount 
         public int MinQuantityToAvailPromotion { get; set; } = 1;
         public decimal PromotedPriceForUnitItem { get; set; }
         public decimal RegularPriceForUnitItem { get; set; }
         public List<string> CombinationItemList { get; set; }
-
+        /// <summary>
+        /// initializes the available promotion object with passed values
+        /// </summary>
+        /// <param name="sku"></param>
+        /// <param name="promotionType"></param>
+        /// <param name="discountPercentage"></param>
+        /// <param name="promotionPrice"></param>
+        /// <param name="minQuantityToAvailPromotion"></param>
+        /// <param name="regularPriceForUnitItem"></param>
+        /// <param name="combinationList"></param>
         public AvailablePromotion(string sku, PromotionType promotionType, int discountPercentage,
             decimal promotionPrice, int minQuantityToAvailPromotion, decimal regularPriceForUnitItem, List<string> combinationList)
         {
@@ -60,7 +70,10 @@ namespace CodingAssignment
             this.CombinationItemList = combinationList;
             this.PromotedPriceForUnitItem = CalculatePromotedPriceForUnitItem();
         }
-
+        /// <summary>
+        /// calculates the unit price for the item, for which promotion is available
+        /// </summary>
+        /// <returns></returns>
         private decimal CalculatePromotedPriceForUnitItem()
         {
             decimal unitPrice = 0;
@@ -113,6 +126,7 @@ namespace CodingAssignment
                 }
                 // check if promotion offer available
                 AvailablePromotion availablePromotion = availablePromotions.Where(x => x.PromotionApplicableOnSku == orderItem.ItemSku).FirstOrDefault();
+                // promotion available, then calculate price using promotion
                 if (availablePromotion != null && orderItem.Quantity >= availablePromotion.MinQuantityToAvailPromotion)
                 {
                     if (availablePromotion.PromotionType != PromotionType.combo)
@@ -152,6 +166,7 @@ namespace CodingAssignment
                         }
                     }
                 }
+                // promotion not available
                 else
                 {
                     totalPrice += orderItem.Quantity * item.UnitPrice;
